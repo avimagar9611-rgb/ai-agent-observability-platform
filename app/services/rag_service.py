@@ -3,9 +3,7 @@ import hashlib
 from functools import lru_cache
 from pathlib import Path
 
-import chromadb
 from pypdf import PdfReader
-from sentence_transformers import SentenceTransformer
 
 
 # ==========================================
@@ -50,6 +48,9 @@ def validate_top_k(top_k):
 
 @lru_cache(maxsize=1)
 def get_embedding_model():
+    # Load only when embeddings are actually needed.
+    from sentence_transformers import SentenceTransformer
+
     return SentenceTransformer(EMBEDDING_MODEL)
 
 
@@ -59,6 +60,9 @@ def get_embedding_model():
 
 @lru_cache(maxsize=1)
 def get_collection():
+    # Load ChromaDB only when document storage/retrieval is needed.
+    import chromadb
+
     client = chromadb.PersistentClient(
         path=str(CHROMA_DIR)
     )
